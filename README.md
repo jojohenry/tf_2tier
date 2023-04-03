@@ -1,5 +1,5 @@
  # Terraform Cloud CI/CD: Two-Tier Architecture with Modules
-...
+ 
 ## A functional project written in Hashicorp showing how to construct a Two-Tier Architecture with Terraform Cloud CI/CD!
 
 ## Prerequisites
@@ -7,7 +7,7 @@
 * GitHub Account
 * AWS Account
 
-This project will show you how to create a CI/CD Pipeline with Terraform Cloud
+## Steps
 
 1. Create a two-tier architecture using modules. This will consists of:
 * Two public subnets for the Web Server tier and two private subnets for the RDS Database tier.
