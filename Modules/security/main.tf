@@ -1,7 +1,7 @@
-#---/Modules/security-group---
+#---/Modules/securitygroups---
 
 # create security group for the application load balancer
-resource "aws_security_group" "alb_security_group" {
+resource "aws_security_group" "alb-sg" {
   name        = "alb security group"
   description = "enable http access on port 80"
   vpc_id      = var.vpc_id
@@ -23,12 +23,12 @@ resource "aws_security_group" "alb_security_group" {
   }
 
   tags = {
-    Name = "alb_sg"
+    Name = "alb-sg"
   }
 }
 
 # create security group for SSH 
-resource "aws_security_group" "ssh-security-group" {
+resource "aws_security_group" "ssh-sg" {
   name        = "SSH Security Group"
   description = "Allow SSH Access on Port 22"
   vpc_id      = var.vpc_id
@@ -50,13 +50,13 @@ resource "aws_security_group" "ssh-security-group" {
   }
 
   tags = {
-    Name = "SSH Security Group"
+    Name = "SSH-sg"
   }
 }
 
 # create security group for the webserver via alb
 
-resource "aws_security_group" "ec2_security_group" {
+resource "aws_security_group" "ec2-sg" {
   name        = "Instance security group"
   description = "Allow HTTP Access on Port 80 via ALB SG & SSH Port 22 via internet"
   vpc_id      = var.vpc_id
@@ -67,7 +67,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.alb_security_group.id}"]
+    security_groups = ["${aws_security_group.alb-sg.id}"]
   }
 
   ingress {
@@ -75,7 +75,7 @@ resource "aws_security_group" "ec2_security_group" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.ssh-security-group.id}"]
+    security_groups = ["${aws_security_group.ssh-sg.id}"]
   }
 
   egress {
@@ -90,10 +90,10 @@ resource "aws_security_group" "ec2_security_group" {
   }
 }
 
-# create security group for the Database
+# create security group for the rds
 
-resource "aws_security_group" "database-security-group" {
-  name        = "Database Security Group"
+resource "aws_security_group" "rds-sg" {
+  name        = "RDS Security Group"
   description = "Enable MYSQL Access on Port 3306 "
   vpc_id      = var.vpc_id
 
@@ -103,7 +103,7 @@ resource "aws_security_group" "database-security-group" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.ec2_security_group.id}"]
+    security_groups = ["${aws_security_group.ec2-sg.id}"]
   }
 
   egress {
@@ -114,6 +114,6 @@ resource "aws_security_group" "database-security-group" {
   }
 
   tags = {
-    Name = "Database Security Group"
+    Name = "rds Security Group"
   }
 }

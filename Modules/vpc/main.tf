@@ -5,6 +5,7 @@ resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr_block
   instance_tenancy     = "default"
   enable_dns_hostnames = true
+  enable_dns_support   = true
   
   tags = {
     Name = "${var.tag_name}-vpc"
@@ -21,6 +22,7 @@ resource "aws_internet_gateway" "gateway" {
 }
 
 resource "aws_eip" "nat" {
+  depends_on =[aws_internet_gateway.gateway]
   count = length(aws_subnet.public)
 
   vpc = true
@@ -45,6 +47,10 @@ resource "aws_nat_gateway" "nat" {
 # use data source to get all avalablility zones in region
 data "aws_availability_zones" "available_zones" {}
 
+resource "random_shuffle" "az" {
+  input = data.aws_availability_zones.available_zones.names
+  result_count = 2
+}
 #create public subnets
 resource "aws_subnet" "public" {
   count = length(var.public_subnet_cidr_blocks)
@@ -52,7 +58,7 @@ resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.public_subnet_cidr_blocks[count.index]
   map_public_ip_on_launch = true
-  availability_zone = var.availability_zones[count.index]
+  availability_zone = random_shuffle.az.result[count.index]
 
   tags = {
     Name = "public-subnet-${count.index}"
@@ -65,7 +71,7 @@ resource "aws_subnet" "private" {
 
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.private_subnet_cidr_blocks[count.index]
-  availability_zone = var.availability_zones[count.index]
+  availability_zone = random_shuffle.az.result[count.index]
 
   tags = {
     Name = "private-subnet-${count.index}"
@@ -104,15 +110,25 @@ resource "aws_route_table" "private_route_table" {
 
 
 # associate public subnets to "public route table"
-resource "aws_route_table_association" "public" {
-  count          = 2 #length(aws_subnet.public)
-  subnet_id      = aws_subnet.public[count.index].id
+#resource "aws_route_table_association" "public_assoc" {
+#  subnet_id      = aws_subnet.public[0].id
+#  route_table_id = aws_route_table.public_route_table[0]
+#}
+
+#resource "aws_route_table_association" "public_assoc" {
+#  subnet_id      = aws_subnet.public[1].id
+#  route_table_id = aws_route_table.public_route_table[1]
+#}
+# associate private subnets to "private route table"
+resource "aws_route_table_association" "public_assoc" {
+  count = length(aws_subnet.private)
+  subnet_id     = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-# associate private subnets to "private route table"
-resource "aws_route_table_association" "private" {
-  count          = 2 #length(aws_subnet.private)
+resource "aws_route_table_association" "private_assoc" {
+  count = length(aws_subnet.private)
   subnet_id     = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private_route_table[count.index]
+  route_table_id = aws_route_table.private_route_table[count.index].id
 }
+

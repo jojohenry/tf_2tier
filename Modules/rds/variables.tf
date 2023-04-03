@@ -1,8 +1,13 @@
-#---/Modules/database---
+#---/Modules/rds---
 
-variable "identifier" {}
 variable "engine" {}
 variable "engine_version" {}
+variable "instance_class" {
+  default = "db.t2.small"
+}
+variable "allocated_storage" {
+  default = 10
+}
 variable "db_name" {}
 variable "username" {
   sensitive = true
@@ -10,7 +15,7 @@ variable "username" {
 variable "password" {
   sensitive = true
 }
-variable "database-security-group" {}
+variable "rds-sg" {}
 variable "subnet_ids" {}
 
 
