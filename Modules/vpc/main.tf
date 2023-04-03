@@ -1,6 +1,6 @@
-#---/Modules/vpc---
+#/modules/vpc 
 
-# create vpc
+#Create VPC
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_cidr_block
   instance_tenancy     = "default"
@@ -12,26 +12,7 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# create internet gateway and attach it to vpc
-resource "aws_internet_gateway" "gateway" {
-  vpc_id = aws_vpc.vpc.id
-
-  tags = {
-    Name = "${var.tag_name}-igw"
-  }
-}
-
-resource "aws_eip" "nat" {
-  depends_on =[aws_internet_gateway.gateway]
-  count = length(aws_subnet.public)
-
-  vpc = true
-
-  tags = {
-    Name        = "nat-eip-${count.index}"
-  }
-}
-
+#Create the NAT Gateway
 resource "aws_nat_gateway" "nat" {
   count             = length(aws_subnet.public)
   allocation_id     = aws_eip.nat[count.index].id
@@ -43,15 +24,37 @@ resource "aws_nat_gateway" "nat" {
   }
 }
 
+#Create Internet Gateway and Attach it to VPC
+resource "aws_internet_gateway" "gateway" {
+  vpc_id = aws_vpc.vpc.id
 
-# use data source to get all avalablility zones in region
+  tags = {
+    Name = "${var.tag_name}-igw"
+  }
+}
+
+#Create the Elastic IP
+resource "aws_eip" "nat" {
+  depends_on =[aws_internet_gateway.gateway]
+  count = length(aws_subnet.public)
+
+  vpc = true
+
+  tags = {
+    Name        = "nat-eip-${count.index}"
+  }
+}
+
+#Use Data Source to get all Availablility Zones in Region
 data "aws_availability_zones" "available_zones" {}
 
+#Generates a Random Permutation of a List of Strings
 resource "random_shuffle" "az" {
   input = data.aws_availability_zones.available_zones.names
   result_count = 2
 }
-#create public subnets
+
+#Create Public Subnets
 resource "aws_subnet" "public" {
   count = length(var.public_subnet_cidr_blocks)
 
@@ -61,11 +64,11 @@ resource "aws_subnet" "public" {
   availability_zone = random_shuffle.az.result[count.index]
 
   tags = {
-    Name = "public-subnet-${count.index}"
+    Name = "Public-Subnet-${count.index}"
   }
 }
 
-#create private subnets
+#Create Private Subnets
 resource "aws_subnet" "private" {
   count = length(var.private_subnet_cidr_blocks)
 
@@ -74,11 +77,11 @@ resource "aws_subnet" "private" {
   availability_zone = random_shuffle.az.result[count.index]
 
   tags = {
-    Name = "private-subnet-${count.index}"
+    Name = "Private-Subnet-${count.index}"
   }
 }
 
-# create route table and add public route
+#Create Route Table and Add Public Route
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
 
@@ -88,11 +91,11 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "${var.tag_name}-public route table"
+    Name = "Public RT-${var.tag_name}"
   }
 }
 
-# create route table and add private route
+#Create Route Table and Add Private Route
 resource "aws_route_table" "private_route_table" {
   count = 2
   vpc_id = aws_vpc.vpc.id
@@ -103,32 +106,20 @@ resource "aws_route_table" "private_route_table" {
   }
 
   tags = {
-    Name = "${var.tag_name}-private route table"
+    Name = "Private RT-${var.tag_name}"
   }
 }
 
-
-
-# associate public subnets to "public route table"
-#resource "aws_route_table_association" "public_assoc" {
-#  subnet_id      = aws_subnet.public[0].id
-#  route_table_id = aws_route_table.public_route_table[0]
-#}
-
-#resource "aws_route_table_association" "public_assoc" {
-#  subnet_id      = aws_subnet.public[1].id
-#  route_table_id = aws_route_table.public_route_table[1]
-#}
-# associate private subnets to "private route table"
+#Associate Public Subnets to Public Route Table
 resource "aws_route_table_association" "public_assoc" {
-  count = length(aws_subnet.private)
+  count = length(aws_subnet.public)
   subnet_id     = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public_route_table.id
 }
 
+#Associate Private Subnets to Private Route Table
 resource "aws_route_table_association" "private_assoc" {
   count = length(aws_subnet.private)
   subnet_id     = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private_route_table[count.index].id
 }
-

@@ -1,4 +1,4 @@
-#---/Modules/ec2---
+# /modules/ec2 
 
 variable "ami" {}
 variable "instance_type" {}

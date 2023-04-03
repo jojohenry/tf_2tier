@@ -1,4 +1,4 @@
-#--/Modules/vpc---
+#/modules/vpc 
 output "aws_public_subnet" {
   value = aws_subnet.public.*.id
 }

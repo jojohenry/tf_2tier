@@ -1,4 +1,4 @@
- # Terraform Cloud CI/CD: Two-Tier Architecture with Modules
+ # Terraform Cloud CI/CD: Two-Tier Architecture with modules
  
 ## A functional project written in Hashicorp showing how to construct a Two-Tier Architecture with Terraform Cloud CI/CD!
 

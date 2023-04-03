@@ -1,4 +1,5 @@
-#---/Modules/vpc---
+# /modules/vpc 
+
 variable "tag_name" {
   type        = string
   description = "This configures the vpc name"
@@ -15,7 +16,3 @@ variable "private_subnet_cidr_blocks" {
   type        = list(any)
   description = "This configures the private subnet cidr"
 }
-#variable "availability_zones" {
-#  type        = list(string)
-#  description = "A list of availability zones for this subnet"
-#}

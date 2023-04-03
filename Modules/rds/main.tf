@@ -1,12 +1,4 @@
-#---/Modules/rds---
-
-resource "aws_db_subnet_group" "db_subnet" {
-  name       = "dbsubnet"
-  subnet_ids = var.subnet_ids
-  tags = {
-    Name = "dbsubnet"
-  }
-}
+#/modules/rds
 
 resource "aws_db_instance" "rdsinstance" {
   engine              = var.engine
@@ -20,8 +12,13 @@ resource "aws_db_instance" "rdsinstance" {
   allocated_storage = var.allocated_storage
 
   vpc_security_group_ids = [var.rds-sg]
-
   db_subnet_group_name = aws_db_subnet_group.db_subnet.name
+}
 
-
+resource "aws_db_subnet_group" "db_subnet" {
+  name       = "dbsubnet"
+  subnet_ids = var.subnet_ids
+  tags = {
+    Name = "dbsubnet"
+  }
 }

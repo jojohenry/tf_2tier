@@ -1,17 +1,4 @@
-#---/Modules/alb---
-
-resource "aws_lb_target_group" "target-group" {
-  health_check {
-    interval            = var.lb_interval
-    timeout             = var.lb_timeout
-    healthy_threshold   = var.lb_healthy_threshold
-    unhealthy_threshold = var.lb_unhealthy_threshold
-  }
-  name        = "${var.tag_name}-tg"
-  port        = var.lb_port
-  protocol    = var.lb_protocol
-  vpc_id      = var.vpc_id
-}
+#/modules/alb
 
 resource "aws_lb" "application-lb" {
   name               = "${var.tag_name}-alb"
@@ -27,6 +14,19 @@ resource "aws_lb" "application-lb" {
   }
 }
 
+resource "aws_lb_target_group" "target-group" {
+  health_check {
+    interval            = var.lb_interval
+    timeout             = var.lb_timeout
+    healthy_threshold   = var.lb_healthy_threshold
+    unhealthy_threshold = var.lb_unhealthy_threshold
+  }
+  name        = "${var.tag_name}-tg"
+  port        = var.lb_port
+  protocol    = var.lb_protocol
+  vpc_id      = var.vpc_id
+}
+
 resource "aws_lb_listener" "alb-listener" {
   load_balancer_arn = aws_lb.application-lb.arn
   port              = var.lb_port
@@ -36,8 +36,6 @@ resource "aws_lb_listener" "alb-listener" {
     target_group_arn = aws_lb_target_group.target-group.arn
   }
 }
-
-
 
 resource "aws_lb_target_group_attachment" "ec2_attach" {
   count            = length(var.aws_instance)

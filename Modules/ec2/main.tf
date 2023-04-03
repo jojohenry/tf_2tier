@@ -1,7 +1,4 @@
-#---/Modules/ec2---
-
-# compute module main.tf
-
+#/modules/ec2
 
 resource "aws_instance" "ec2_instance" {
   count = length(var.subnet_ids)
@@ -14,7 +11,7 @@ resource "aws_instance" "ec2_instance" {
   user_data = var.user_data
   
   tags = {
-    Name = "Webserver ${count.index}"
+    Name = "TF-TwoTier ${count.index}"
   }
 }
 

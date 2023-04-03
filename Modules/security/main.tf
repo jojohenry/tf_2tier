@@ -1,66 +1,10 @@
-#---/Modules/securitygroups---
+#/modules/security
 
-# create security group for the application load balancer
-resource "aws_security_group" "alb-sg" {
-  name        = "alb security group"
-  description = "enable http access on port 80"
-  vpc_id      = var.vpc_id
-
-
-  ingress {
-    description = "Allow HTTP Access from Internet"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "alb-sg"
-  }
-}
-
-# create security group for SSH 
-resource "aws_security_group" "ssh-sg" {
-  name        = "SSH Security Group"
-  description = "Allow SSH Access on Port 22"
-  vpc_id      = var.vpc_id
-
-
-  ingress {
-    description = "ssh access"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "SSH-sg"
-  }
-}
-
-# create security group for the webserver via alb
-
+#Security Group for the EC2 instance via ALB
 resource "aws_security_group" "ec2-sg" {
   name        = "Instance security group"
-  description = "Allow HTTP Access on Port 80 via ALB SG & SSH Port 22 via internet"
+  description = "Allow SSH Port 22 via internet & HTTP Access on Port 80 via ALB SG"
   vpc_id      = var.vpc_id
-
 
   ingress {
     description     = "Allow HTTP Access"
@@ -90,8 +34,58 @@ resource "aws_security_group" "ec2-sg" {
   }
 }
 
-# create security group for the rds
+#Security Group for the Application Load Balancer
+resource "aws_security_group" "alb-sg" {
+  name        = "ALB Security Group"
+  description = "Enable HTTP Access on Port 80"
+  vpc_id      = var.vpc_id
 
+  ingress {
+    description = "Allow HTTP Access from Internet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
+#Security Group for SSH 
+resource "aws_security_group" "ssh-sg" {
+  name        = "SSH Security Group"
+  description = "Allow SSH Access on Port 22"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "SSH Access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "SSH-sg"
+  }
+}
+
+#Security Group for RDS Database
 resource "aws_security_group" "rds-sg" {
   name        = "RDS Security Group"
   description = "Enable MYSQL Access on Port 3306 "
@@ -114,6 +108,6 @@ resource "aws_security_group" "rds-sg" {
   }
 
   tags = {
-    Name = "rds Security Group"
+    Name = "RDS Security Group"
   }
 }
