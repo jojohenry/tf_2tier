@@ -6,7 +6,7 @@ sudo systemctl enable httpd
 echo " <html>
 <body>
 
-<center><h1><b>Congratulations!</h1> <h2>You have successfully deployed a Two-Tier Architecture via Terraform Cloud.</h2></b></center>
+<center><h1><b>Congratulations!</h1> <h2>You have successfully deployed a Two-Tier Architecture.</h2></b></center>
 
 
 </body>
