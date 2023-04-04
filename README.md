@@ -1,4 +1,4 @@
- # Terraform: Creating Two-Tier Architecture with modules
+ # Terraform: Creating Two-Tier Architecture with Modules
 
 ![hello](https://user-images.githubusercontent.com/109822667/229891846-34afaf2f-2569-45f3-844e-4b4694015990.jpg)
 
