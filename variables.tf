@@ -1,48 +1,24 @@
 #/root 
 
 #vpc
-variable "tag_name" {
-  default = "Week22"
-}
-variable "vpc_id" {
-  type        = string
-  description = "This configures the vpc cidr"
-  default    = "10.0.0.0/16"
-}
-variable "vpc_cidr_block" {
-  type        = string
-  description = "This configures the vpc cidr"
-  default     = "10.0.0.0/16"
-}
+variable "tag_name" {}
+variable "vpc_id" {}
+variable "vpc_cidr_block" {}
 
 #ec2
-variable "instance_type" {
-  default = "t2.micro"
-}
-variable "keyname" {
-  default = "JojoKeys"
-}
-variable "ami" {
-  default = "ami-0dfcb1ef8550277af"
-}
+variable "instance_type" {}
+variable "keyname" {}
+variable "ami" {}
 
 #rds
-variable "engine" {
-  default = "mysql"
-}
-variable "engine_version" {
-  default = "8.0.28"
-}
-variable "db_name" {
-  default = "rdsdb"
-}
+variable "engine" {}
+variable "engine_version" {}
+variable "db_name" {}
 variable "username" {
   sensitive = true
-  default  = "user"
 }
 variable "password" {
   sensitive = true
-  default = "password"
 }
 
 variable "region" {
