@@ -9,7 +9,7 @@
 * IDE of your choice
 
 ## Objective
-Create a two-tier architecture using modules. This will consists of:
+Create a two-tier architecture using modules. This will consist of:
 * Two public subnets for the Web Server tier and two private subnets for the RDS Database tier
 * Public and private route tables and security groups for both tiers
 * EC2 instances with Apache installed and custom web page in the public Web Tier subnets
