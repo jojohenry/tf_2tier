@@ -1,7 +1,6 @@
 region         = "us-east-1"
 tag_name       = "Week22"
 vpc_cidr_block = "10.0.0.0/16"
-vpc_id         = "10.0.0.0/16"
 ami            = "ami-0dfcb1ef8550277af"
 instance_type  = "t2.micro"
 keyname        = "JojoKeys"
